@@ -1,0 +1,90 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class play_control : MonoBehaviour
+{
+    public Rigidbody2D rb;
+    public Collider2D coll;
+    public float speed;
+    public Animator anim;
+    public float jumpforce;
+    public LayerMask ground;
+    public int Tian = 0;
+    public Text TianNum;
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        
+    }
+
+    // Update is called once per frame
+    void FixedUpdate()
+    {
+        Movement(); 
+        SwitchAnim();
+    }
+
+    void Movement()
+    {
+        float horizontalMove = Input.GetAxis("Horizontal");
+        float facedirection = Input.GetAxisRaw("Horizontal");
+
+        if (horizontalMove != 0)
+        {
+            rb.velocity = new Vector2(horizontalMove * speed * Time.deltaTime, rb.velocity.y);
+            anim.SetFloat("running", Mathf.Abs(facedirection));
+            Debug.Log("moved");
+        }
+        
+        if (facedirection != 0)
+        {
+            transform.localScale = new Vector3(facedirection, 1, 1);
+            Debug.Log("changed");
+        }
+            //if (Input.GetButtonDown("Jump") )
+        if ((Input.GetButtonDown("Jump") || Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W)) && coll.IsTouchingLayers(ground))
+        {
+            rb.velocity = new Vector2(rb.velocity.x, jumpforce *Time.deltaTime ); 
+            anim.SetBool("jumping", true);
+        }
+    }
+
+    void SwitchAnim()
+    {
+        anim.SetBool("idle", false);
+
+        if (anim.GetBool("jumping"))
+        {
+            if (rb.velocity.y < 0)
+            {
+                anim.SetBool("jumping", false);
+                anim.SetBool("falling", true);
+                
+            }
+        }
+        else if (coll.IsTouchingLayers(ground))
+            {
+                
+                anim.SetBool("falling", false);
+                anim.SetBool("idle", true);
+                Debug.Log("on th ground");
+    
+            }
+          
+        }
+    private void OnTriggerEnter2D(Collider2D collision)
+{
+    if (collision.tag == "Collection")
+    {
+        Destroy(collision.gameObject); // 当触发器碰到tag为"Collection"的物体时，销毁该物体
+        Tian += 1; 
+        TianNum.text =Tian.ToString();// 增加一个tian的计数
+    }
+}
+
+}
+
+
