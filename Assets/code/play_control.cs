@@ -25,6 +25,12 @@ public class play_control : MonoBehaviour
     {
         Movement(); 
         SwitchAnim();
+        // 检查Tian是否等于9以切换到下一个场景
+        if (Tian == 9)
+        {
+            // 加载下一个场景
+            //SceneManager.LoadScene("NextSceneName");
+        }
     }
 
     void Movement()
